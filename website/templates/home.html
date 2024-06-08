@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>PHP Code Analyzer</title>
+</head>
+<body class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto p-8">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="px-6 py-4 bg-gray-800 text-white">
+                <h1 class="text-3xl font-bold">PHP Code Analyzer</h1>
+            </div>
+            <form method="post" class="p-6 space-y-6">
+                <div>
+                    <label for="codigo" class="block text-sm font-medium text-gray-700">Enter your PHP code:</label>
+                    <textarea id="codigo" name="codigo" rows="10" class="mt-1 p-3 w-full text-sm text-gray-900 bg-gray-100 rounded-md border border-gray-300 focus:ring-purple-500 focus:border-purple-500 placeholder-gray-400" placeholder="Type your PHP code here...">{{ codigo }}</textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md focus:ring-4 focus:ring-purple-300">Analyze</button>
+                </div>
+            </form>
+        </div>
+
+        {% if error %}
+        <div class="mt-6 p-4 bg-red-100 text-red-700 rounded-lg shadow-md">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        {% if tokens %}
+        <div class="mt-6 bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="px-6 py-4 bg-gray-800 text-white">
+                <h2 class="text-2xl font-bold">Token Analysis</h2>
+            </div>
+            <div class="p-6 overflow-x-auto">
+                <table class="table-auto w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border px-4 py-2">Line</th>
+                            <th class="border px-4 py-2">Token</th>
+                            <th class="border px-4 py-2">Keyword</th>
+                            <th class="border px-4 py-2">Identifier</th>
+                            <th class="border px-4 py-2">Symbol</th>
+                            <th class="border px-4 py-2">String</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for token in tokens %}
+                        <tr>
+                            <td class="border px-4 py-2">{{ token.line }}</td>
+                            <td class="border px-4 py-2">{{ token.value }}</td>
+                            <td class="border px-4 py-2">{{ 'Yes' if token.type == 'keyword' else 'No' }}</td>
+                            <td class="border px-4 py-2">{{ 'Yes' if token.type == 'identifier' else 'No' }}</td>
+                            <td class="border px-4 py-2">{{ 'Yes' if token.type == 'symbol' else 'No' }}</td>
+                            <td class="border px-4 py-2">{{ 'Yes' if token.type == 'string' else 'No' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mt-6 bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="px-6 py-4 bg-gray-800 text-white">
+                <h2 class="text-2xl font-bold">Syntax Analysis</h2>
+            </div>
+            <div class="p-6">
+                <p class="text-lg {% if 'Error' in sintactico_result %}text-red-700{% else %}text-gray-900{% endif %}">
+                    {{ sintactico_result }}
+                </p>
+            </div>
+        </div>
+        <div class="mt-6 grid grid-cols-2 gap-4">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold">Total Tokens</h3>
+                <p class="mt-1 text-xl">{{ total_tokens }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold">Keywords</h3>
+                <p class="mt-1 text-xl">{{ total_keywords }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold">Identifiers</h3>
+                <p class="mt-1 text-xl">{{ total_identifiers }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold">Symbols</h3>
+                <p class="mt-1 text-xl">{{ total_symbols }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h3 class="text-lg font-semibold">Strings</h3>
+                <p class="mt-1 text-xl">{{ total_strings }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
