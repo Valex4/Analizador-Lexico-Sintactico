@@ -7,6 +7,7 @@ php_keywords = ["echo"]
 php_symbols = ["<?php", "?>", ";", "{", "}", "(", ")"]
 identifier_pattern = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*")
 string_pattern = re.compile(r'"[^"]*"|\'[^\']*\'')
+html_semantic_tags = ["<head>", "<html>", "<body>", "</head>", "</html>", "</body>", "<?php", "?>"]
 
 def tokenize_php_code(code):
     tokens = []
@@ -153,6 +154,13 @@ def sintactic_analysis(tokens):
 
     return "Errores sintácticos encontrados:\n" + "\n".join(errors)
 
+def semantic_html_analysis(html_code):
+    errors = []
+    for tag in html_semantic_tags:
+        if tag not in html_code:
+            errors.append(f"Falta la etiqueta semántica {tag}")
+    return errors
+
 @views.route('/', methods=['GET', 'POST'])
 def index():
     codigo = ""
@@ -165,6 +173,7 @@ def index():
 
         token_count = count_tokens(tokens)
         sintactico_result = sintactic_analysis(tokens)
+        html_errors = semantic_html_analysis(codigo)
 
         total_tokens = len(tokens)
         total_keywords = token_count["keywords"]
@@ -172,6 +181,6 @@ def index():
         total_symbols = token_count["symbols"]
         total_strings = token_count["strings"]
 
-        return render_template('home.html', tokens=tokens, total_tokens=total_tokens, total_keywords=total_keywords, total_identifiers=total_identifiers, total_symbols=total_symbols, total_strings=total_strings, codigo=codigo, sintactico_result=sintactico_result)
+        return render_template('home.html', tokens=tokens, total_tokens=total_tokens, total_keywords=total_keywords, total_identifiers=total_identifiers, total_symbols=total_symbols, total_strings=total_strings, codigo=codigo, sintactico_result=sintactico_result, html_errors=html_errors)
     
     return render_template('home.html', codigo=codigo)
